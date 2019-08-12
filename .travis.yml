@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t alcappello/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run alcappello/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t alcappello/multi-docker-client ./client
+  - docker build -t alcappello/multi-docker-nginx  ./nginx
+  - docker build -t alcappello/multi-docker-server ./server
+  - docker build -t alcappello/multi-docker-worker ./worker
+  # Login into Docker CLI
+  - echo "$DOCKER_PASSWD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to hub.docker.com
+  - docker push alcappello/multi-docker-client
+  - docker push alcappello/multi-docker-nginx
+  - docker push alcappello/multi-docker-server
+  - docker push alcappello/multi-docker-worker
