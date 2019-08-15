@@ -5,6 +5,7 @@
       "name": "nginx",
       "image": "alcappello/multi-docker-nginx",
       "essential": true,
+      "memory": 128,
       "links": ["client", "server"],
       "portMappings": [
         {
